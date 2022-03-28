@@ -1,4 +1,4 @@
-package com.firstproj;
+package com.lifecartmain;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
