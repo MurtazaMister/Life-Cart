@@ -15,9 +15,16 @@ public class Grocery {
 	double costPrice;
 	double sellPrice;
 	int quantity;
-	public Grocery(long id, String name, double costPrice, double sellPrice, int quantity) {
+	public Grocery() {
 		super();
-		this.id = id;
+		this.id = -1;
+		this.name = null;
+		this.costPrice = 0;
+		this.sellPrice = 0;
+		this.quantity = 0;
+	}
+	public Grocery(String name, double costPrice, double sellPrice, int quantity) {
+		super();
 		this.name = name;
 		this.costPrice = costPrice;
 		this.sellPrice = sellPrice;
