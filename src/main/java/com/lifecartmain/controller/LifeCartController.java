@@ -2,6 +2,8 @@ package com.lifecartmain.controller;
 
 import java.net.http.HttpRequest;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.sql.Date;
 
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import com.lifecartmain.dao.CartRepo;
 import com.lifecartmain.dao.GroceryRepo;
+import com.lifecartmain.dao.OrderRepo;
 import com.lifecartmain.dao.UserRepo;
 import com.lifecartmain.models.User;
 
@@ -27,6 +30,7 @@ import ch.qos.logback.core.Context;
 
 import com.lifecartmain.models.Cart;
 import com.lifecartmain.models.Grocery;
+import com.lifecartmain.models.Orders;
 
 import java.util.List;
 import jakarta.servlet.http.HttpSession;
@@ -42,6 +46,8 @@ public class LifeCartController {
 	GroceryRepo gRepo;
 	@Autowired
 	CartRepo cartRepo;
+	@Autowired
+	OrderRepo orderRepo;
 	
 	@RequestMapping("/")
 	public ModelAndView home() {
@@ -155,12 +161,22 @@ public class LifeCartController {
 		}
 		String username = (String)session.getAttribute("username");
 		List<Object[]> cart = cartRepo.findAllByUsername(username);
+//		System.out.println(cart);
 		for(int i = 0;i<cart.size();i++) {
-			long prodID = (Long)cart.get(i)[1];
-			int quantity = (Integer)cart.get(i)[2];
-			int tmp = (Integer)gRepo.getQuantity(prodID);
+//			System.out.println(cart.get(i)[1]);
+//			System.out.println(cart.get(i)[2]);
+			long prodID = (long)(cart.get(i)[1]);
+			int quantity = (int)(cart.get(i)[2]);
+			int tmp = (int)gRepo.getQuantity(prodID);
 			quantity = Math.max(quantity, tmp);
 			gRepo.update(prodID,quantity);
+			double price = (Double)gRepo.getSellPrice(prodID);
+			Orders order = new Orders(username,prodID,quantity,price);
+//			order.setPrice(price);
+//			order.setProdID(prodID);
+//			order.setQuantity(quantity);
+//			order.setUsername(username);
+			orderRepo.save(order);
 		}
 		ModelAndView mv=new ModelAndView();
 		mv.setViewName("checkout");

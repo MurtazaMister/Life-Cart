@@ -1,7 +1,16 @@
 package com.lifecartmain.models;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
+import org.apache.naming.java.javaURLContextFactory;
+import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.context.annotation.Scope;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -15,23 +24,27 @@ public class Orders {
 	long prodID;
 	int quantity;
 	double price;
-	Date dateTime;
-	public Orders(String username, long prodID, int quantity, double price, Date dateTime) {
+	public Orders() {
+		super();
+		this.username = null;
+		this.prodID = -1;
+		this.quantity = 0;
+		this.price = 0;
+	}
+	public Orders(String username, long prodID, int quantity, double price) {
 		super();
 		this.username = username;
 		this.prodID = prodID;
 		this.quantity = quantity;
 		this.price = price;
-		this.dateTime = dateTime;
 	}
-	public Orders(long id, String username, long prodID, int quantity, double price, Date dateTime) {
+	public Orders(long id, String username, long prodID, int quantity, double price) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.prodID = prodID;
 		this.quantity = quantity;
 		this.price = price;
-		this.dateTime = dateTime;
 	}
 	public long getId() {
 		return id;
@@ -62,11 +75,5 @@ public class Orders {
 	}
 	public void setPrice(double price) {
 		this.price = price;
-	}
-	public Date getDateTime() {
-		return dateTime;
-	}
-	public void setDateTime(Date dateTime) {
-		this.dateTime = dateTime;
 	}
 }
