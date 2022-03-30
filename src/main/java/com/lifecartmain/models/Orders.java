@@ -1,6 +1,6 @@
 package com.lifecartmain.models;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.LocalDateTime;
 
 import org.apache.naming.java.javaURLContextFactory;
@@ -24,27 +24,37 @@ public class Orders {
 	long prodID;
 	int quantity;
 	double price;
+	Date orderDate;
 	public Orders() {
 		super();
 		this.username = null;
 		this.prodID = -1;
 		this.quantity = 0;
 		this.price = 0;
+		this.orderDate = null;
 	}
-	public Orders(String username, long prodID, int quantity, double price) {
+	public Orders(String username, long prodID, int quantity, double price, Date orderDate) {
 		super();
 		this.username = username;
 		this.prodID = prodID;
 		this.quantity = quantity;
 		this.price = price;
+		this.orderDate = orderDate;
 	}
-	public Orders(long id, String username, long prodID, int quantity, double price) {
+	public Orders(long id, String username, long prodID, int quantity, double price, Date orderDate) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.prodID = prodID;
 		this.quantity = quantity;
 		this.price = price;
+		this.orderDate = orderDate;
+	}
+	public Date getOrderDate() {
+		return orderDate;
+	}
+	public void setOrderDate(Date orderDate) {
+		this.orderDate = orderDate;
 	}
 	public long getId() {
 		return id;

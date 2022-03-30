@@ -1,9 +1,9 @@
 package com.lifecartmain.controller;
-
+import java.util.Date;
 import java.net.http.HttpRequest;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.sql.Date;
+import java.time.LocalDate;
 
 import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,8 +154,17 @@ public class LifeCartController {
 		return "redirect:/groceries";
 	}
 	
+	@RequestMapping("/removeFromCart")
+	public String removeFromCart(@ModelAttribute("Cart") Cart c, HttpSession session) {
+		if(session==null) {
+			return "redirect:/login";
+		}
+		cartRepo.deleteItem(c.getId());
+		return "redirect:/groceries";
+	}
+	
 	@RequestMapping("/checkout")
-	public ModelAndView checkout(HttpSession session) {
+	public ModelAndView checkout(ModelMap map, HttpSession session) {
 		if(session==null) {
 			return new ModelAndView("redirect:/login");
 		}
@@ -168,18 +177,89 @@ public class LifeCartController {
 			long prodID = (long)(cart.get(i)[1]);
 			int quantity = (int)(cart.get(i)[2]);
 			int tmp = (int)gRepo.getQuantity(prodID);
-			quantity = Math.max(quantity, tmp);
-			gRepo.update(prodID,quantity);
+			quantity = Math.min(quantity, tmp);
+			if(quantity < 0) {
+				quantity = 0;
+			}
+			gRepo.update(tmp-quantity,prodID);
 			double price = (Double)gRepo.getSellPrice(prodID);
-			Orders order = new Orders(username,prodID,quantity,price);
+			Date currDate = new Date();
+			Orders order = new Orders(username,prodID,quantity,quantity*price,currDate);
 //			order.setPrice(price);
 //			order.setProdID(prodID);
 //			order.setQuantity(quantity);
 //			order.setUsername(username);
 			orderRepo.save(order);
+			cartRepo.delete(username);
 		}
 		ModelAndView mv=new ModelAndView();
 		mv.setViewName("checkout");
+		List<Object[]> orders = orderRepo.findAllByUsername(username);
+		map.addAttribute("orders", orders);
+		mv.addObject(map);
 		return mv;
+	}
+	@RequestMapping("/viewOrders")
+	public ModelAndView viewOrders(ModelMap map, HttpSession session) {
+		if(session==null) {
+			return new ModelAndView("redirect:/login");
+		}
+		if(null != session.getAttribute("isAdmin") && (boolean)session.getAttribute("isAdmin") == false) {
+			return new ModelAndView("redirect:/");
+		}
+		else if(null == session.getAttribute("isAdmin")) {
+			return new ModelAndView("redirect:/login");
+		}
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("allOrders");
+		List<Orders> orders = orderRepo.findAll();
+		map.addAttribute("orders",orders);
+		mv.addObject(map);
+		return mv;
+	}
+	@RequestMapping("/viewCustomers")
+	public ModelAndView viewCustomers(ModelMap map, HttpSession session) {
+		if(session==null) {
+			return new ModelAndView("redirect:/login");
+		}
+		if(null != session.getAttribute("isAdmin") && (boolean)session.getAttribute("isAdmin") == false) {
+			return new ModelAndView("redirect:/");
+		}
+		else if(null == session.getAttribute("isAdmin")) {
+			return new ModelAndView("redirect:/login");
+		}
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("allCustomers");
+		List<User> users = userRepo.findAll();
+		map.addAttribute("users",users);
+		mv.addObject(map);
+		return mv;
+	}
+	@RequestMapping("/viewInventory")
+	public ModelAndView viewInventory(ModelMap map, HttpSession session,@ModelAttribute("Grocery") Grocery c) {
+		if(session==null) {
+			return new ModelAndView("redirect:/login");
+		}
+		if(null != session.getAttribute("isAdmin") && (boolean)session.getAttribute("isAdmin") == false) {
+			return new ModelAndView("redirect:/");
+		}
+		else if(null == session.getAttribute("isAdmin")) {
+			return new ModelAndView("redirect:/login");
+		}
+		ModelAndView mv= new ModelAndView();
+		mv.setViewName("inventory");
+		List<Grocery> groceries = gRepo.findAll();
+		map.addAttribute("groceries", groceries);
+		mv.addObject(map);
+		return mv;
+	}
+	
+	@RequestMapping("/updateGrocery")
+	public String updateGrocery(@ModelAttribute("Grocery") Grocery g, HttpSession session) {
+		if(null != session.getAttribute("isAdmin") && (boolean)session.getAttribute("isAdmin") == true) {
+			gRepo.update(g.getQuantity(),g.getName(),g.getCostPrice(),g.getSellPrice(),g.getId());
+			return "redirect:/viewInventory";
+		}
+		return "redirect:/login";
 	}
 }

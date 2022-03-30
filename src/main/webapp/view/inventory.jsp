@@ -1,10 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="ISO-8859-1">
-		<title>User Orders</title>
+		<title>View Inventory</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<!-- Bootstrap CSS -->
@@ -28,31 +29,35 @@
 				</a>
 				<ul class="nav nav-pills">
 					<li class="nav-item"><a href="/" class="nav-link">Home</a></li>
-					<li class="nav-item"><a href="/checkout" class="nav-link active" aria-current="page">My Orders</a></li>
-					<li class="nav-item"><a href="/groceries" class="nav-link">Back to Groceries</a></li>
+					<li class="nav-item"><a href="/viewInventory" class="nav-link active" aria-current="page">View Inventory</a></li>
 					<li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
 				</ul>
 			</header>
 		</div>
-		<h1 class="heading my-2 py-2">My Orders</h1>
-		<table class="m-auto">
+		<h1 class="heading my-2 py-2 border-bottom">Inventory</h1>
+		<h2 class="heading my-2 py-2">Grocery</h2>
+		<table class="m-auto table" style="width:70%;">
 			<thead>
 				<tr>
-					<th>Order Id</th>
-					<th>Product Id</th>
+					<th>ID</th>
+					<th>Name</th>
 					<th>Quantity</th>
-					<th>Total Price</th>
-					<th>Order Date</th>
+					<th>CP</th>
+					<th>SP</th>
+					<th>Update</th>
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach items="${orders}" var="order">
+				<c:forEach items="${groceries}" var="grocery">
 					<tr>
-						<td>${order[0]}</td>
-						<td>${order[1]}</td>
-						<td>${order[2]}</td>
-						<td>${order[3]}</td>
-						<td>${order[4]}</td>
+					<form:form method="post" action="updateGrocery" modelAttribute="Grocery">
+						<td><form:input path="id" type="text" name="id" value="${grocery.id}" readonly="true" /></td>
+						<td><form:input path="name" type="text" name="quantity" value="${grocery.name}" /></td>
+						<td><form:input path="quantity" type="text" name="quantity" value="${grocery.quantity}" /></td>
+						<td><form:input path="costPrice" type="text" name="quantity" value="${grocery.costPrice}" /></td>
+						<td><form:input path="sellPrice" type="text" name="quantity" value="${grocery.sellPrice}" /></td>
+						<td><input class="btn btn-dark text-light" type="submit" value="Update" /></td>
+					</form:form>
 					</tr>
 				</c:forEach>
 			</tbody>

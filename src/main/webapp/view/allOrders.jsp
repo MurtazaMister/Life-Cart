@@ -4,7 +4,7 @@
 <html>
 	<head>
 		<meta charset="ISO-8859-1">
-		<title>User Orders</title>
+		<title>View Orders</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<!-- Bootstrap CSS -->
@@ -28,13 +28,12 @@
 				</a>
 				<ul class="nav nav-pills">
 					<li class="nav-item"><a href="/" class="nav-link">Home</a></li>
-					<li class="nav-item"><a href="/checkout" class="nav-link active" aria-current="page">My Orders</a></li>
-					<li class="nav-item"><a href="/groceries" class="nav-link">Back to Groceries</a></li>
+					<li class="nav-item"><a href="/viewOrders" class="nav-link active" aria-current="page">View Orders</a></li>
 					<li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
 				</ul>
 			</header>
 		</div>
-		<h1 class="heading my-2 py-2">My Orders</h1>
+		<h1 class="heading my-2 py-2">All Orders</h1>
 		<table class="m-auto">
 			<thead>
 				<tr>
@@ -43,16 +42,18 @@
 					<th>Quantity</th>
 					<th>Total Price</th>
 					<th>Order Date</th>
+					<th>Username</th>
 				</tr>
 			</thead>
 			<tbody>
 				<c:forEach items="${orders}" var="order">
 					<tr>
-						<td>${order[0]}</td>
-						<td>${order[1]}</td>
-						<td>${order[2]}</td>
-						<td>${order[3]}</td>
-						<td>${order[4]}</td>
+						<td>${order.id}</td>
+						<td>${order.prodID}</td>
+						<td>${order.quantity}</td>
+						<td>${order.price}</td>
+						<td>${order.orderDate}</td>
+						<td>${order.username}</td>
 					</tr>
 				</c:forEach>
 			</tbody>
